@@ -1,0 +1,42 @@
+{
+  "name": "@bytekit/throttle",
+  "version": "1.0.3",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:neoscrib/bytekit-throttle.git"
+  },
+  "main": "./dist/cjs/index.cjs",
+  "module": "./dist/esm/index.js",
+  "type": "module",
+  "types": "./index.d.ts",
+  "files": [
+    "index.d.ts",
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.cjs"
+    }
+  },
+  "keywords": [
+    "throttle",
+    "governor",
+    "sliding window"
+  ],
+  "scripts": {
+    "test": "vitest run --coverage",
+    "build": "vite build"
+  },
+  "author": "Tanner Jepsen <neoscrib@gmail.com>",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@playwright/test": "^1.49.1",
+    "@types/node": "^22.10.5",
+    "@vitest/coverage-v8": "^2.1.8",
+    "typescript": "^5.7.3",
+    "vite": "^5.4.11",
+    "vitest": "^3.0.5"
+  }
+}
