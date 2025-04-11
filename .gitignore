@@ -1,3 +1,11 @@
-dist
 coverage
+.vscode
+*.iml
+.idea
 node_modules
+dist
+tsconfig.tsbuildinfo
+
+# stryker temp files
+.stryker-tmp
+reports/

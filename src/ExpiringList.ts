@@ -1,11 +1,16 @@
-import TypedEventTarget from "./TypedEventTarget";
+import TypedEventTarget from "./TypedEventTarget.ts";
 
 interface IExpiringListEventTargetMap<T> extends Record<string, Event> {
   "item-removed": CustomEvent<T>;
 }
 
-export default class ExpiringList<T> extends Set<T> implements TypedEventTarget<IExpiringListEventTargetMap<T>> {
-  private readonly eventTarget = new TypedEventTarget<IExpiringListEventTargetMap<T>>();
+export default class ExpiringList<T>
+  extends Set<T>
+  implements TypedEventTarget<IExpiringListEventTargetMap<T>>
+{
+  private readonly eventTarget = new TypedEventTarget<
+    IExpiringListEventTargetMap<T>
+  >();
   private readonly timers = new Map<T, NodeJS.Timeout>();
 
   /**
@@ -17,7 +22,10 @@ export default class ExpiringList<T> extends Set<T> implements TypedEventTarget<
 
   add(value: T): this {
     super.add(value);
-    this.timers.set(value, setTimeout(() => this.delete(value), this.ttl));
+    this.timers.set(
+      value,
+      setTimeout(() => this.delete(value), this.ttl)
+    );
     return this;
   }
 

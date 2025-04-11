@@ -1,12 +1,21 @@
-import ExpiringList from "./ExpiringList";
+import ExpiringList from "./ExpiringList.ts";
 
 export default class ThrottledQueue {
   private readonly list: ExpiringList<Function>;
   private readonly queue: Function[] = [];
 
-  public constructor(private readonly maxTasks: number, private readonly windowSize: number, private readonly maxQueueSize = 1000) {
+  public constructor(
+    private readonly maxTasks: number,
+    private readonly windowSize: number,
+    private readonly maxQueueSize = 1000
+  ) {
     this.list = new ExpiringList(windowSize);
-    this.list.addEventListener("item-removed", () => this.run(this.queue.shift()));
+    this.list.addEventListener("item-removed", () => {
+      const task = this.queue.shift();
+      if (task) {
+        this.run(task);
+      }
+    });
   }
 
   public enqueue(task: Function) {
@@ -21,14 +30,12 @@ export default class ThrottledQueue {
     }
   }
 
-  private async run(task?: Function) {
-    if (task) {
-      this.list.add(task);
-      try {
-        await task();
-      } catch (error) {
-        console.error("Task execution error: ", error);
-      }
+  private async run(task: Function) {
+    this.list.add(task);
+    try {
+      await task();
+    } catch (error) {
+      console.error("Task execution error: ", error);
     }
   }
 }

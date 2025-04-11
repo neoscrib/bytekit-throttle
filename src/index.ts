@@ -1,3 +1,4 @@
-import ThrottledQueue from "./ThrottledQueue";
+import ThrottledQueue from "./ThrottledQueue.ts";
+import ThrottledPromiseQueue from "./ThrottledPromiseQueue.ts";
 
-export {ThrottledQueue};
+export {ThrottledQueue, ThrottledPromiseQueue};

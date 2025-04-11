@@ -1,57 +1,38 @@
-declare interface ITotpOptions {
+export type MaybePromise<T> = T | Promise<T>;
+
+/**
+ * A throttled queue for executing fire-and-forget tasks (no return value).
+ */
+export declare class ThrottledQueue {
   /**
-   * TOTP key in either base-32 or binary format
+   * @param maxTasks Maximum tasks allowed per time window
+   * @param windowSize Time window in milliseconds
+   * @param maxQueueSize Optional max queue size before rejecting tasks
    */
-  key: string | Uint8Array;
+  constructor(maxTasks: number, windowSize: number, maxQueueSize?: number);
+
   /**
-   * The number of digits to return; Default is 6.
+   * Enqueue a void-returning task to be executed according to throttling rules.
+   * @throws Error if the queue is full
    */
-  digits?: number;
-  /**
-   * The hashing algorithm to use. One of SHA-1; SHA-256; SHA-384; or SHA-512. Default is SHA-1.
-   */
-  algorithm?: string;
-  /**
-   * The time interval. Default is 30 seconds.
-   */
-  period?: number;
-  /**
-   * The unix epoch timestamp to use. Default is now.
-   */
-  timestamp?: number;
+  enqueue(task: () => void): void;
 }
 
-declare interface ITotpToken {
-  token: string;
-  expires: number;
-  next: string;
-  previous: string;
-}
+/**
+ * A throttled queue for submitting promise-returning or sync functions and receiving their results.
+ */
+export declare class ThrottledPromiseQueue extends ThrottledQueue {
+  /**
+   * @param maxTasks Maximum tasks allowed per time window
+   * @param windowSize Time window in milliseconds
+   * @param maxQueueSize Optional max queue size before rejecting tasks
+   */
+  constructor(maxTasks: number, windowSize: number, maxQueueSize?: number);
 
-declare interface IOtpAuth extends Exclude<ITotpOptions, "timestamp"> {
-  type: string;
-  account: string;
-  issuer?: string;
-  counter?: number;
-}
-
-declare module "@bytekit/totp" {
   /**
-   * Generates a time-based one-time password
-   * @param options The TOTP options
+   * Submit a task returning a value or a promise of a value.
+   * The result is resolved/rejected when the task completes.
+   * @throws Error if the queue is full
    */
-  export function totp(options: ITotpOptions): Promise<ITotpToken>;
-  /**
-   * Generates a counter-based one-time password
-   * @param key OTP key in binary format
-   * @param data Counter value in binary format
-   * @param digits The number of digits to return
-   * @param alg The HMAC hash algorithm to use
-   */
-  export function hotp(key: Uint8Array, data: Uint8Array, digits?: number, alg?: string): Promise<string>;
-  /**
-   * Parses a OTP URI
-   * @param uri The URI to parse
-   */
-  export function parseOtpUri(uri: string): IOtpAuth;
+  submit<T>(task: () => MaybePromise<T>): Promise<T>;
 }
